@@ -173,9 +173,13 @@ gst_markin_transform_ip (GstBaseTransform * trans, GstBuffer * in)
 	
 	GstMetaMarking* meta = GST_META_MARKING_ADD(in);
 
-	GstClock* clock = gst_system_clock_obtain ();
-	meta->in_timestamp = gst_clock_get_time(clock);
-	gst_object_unref(clock);
+	// GstClock* clock = gst_system_clock_obtain ();
+	// meta->in_timestamp = gst_clock_get_time(clock);
+	// gst_object_unref(clock);
+	struct timeval tv;
+  	gettimeofday(&tv,NULL);
+  	guint64 timestamp_in_us = tv.tv_sec*(guint64)1000000+tv.tv_usec;
+	meta->in_timestamp = timestamp_in_us;
 
 	return GST_FLOW_OK;
 }

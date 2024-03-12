@@ -163,11 +163,15 @@ gst_markout_transform_ip (GstBaseTransform * trans, GstBuffer * in)
 		return GST_FLOW_OK;
 	}
 
-	GstClock* clock = gst_system_clock_obtain ();
-	GstClockTimeDiff diff = GST_CLOCK_DIFF(meta->in_timestamp, gst_clock_get_time(clock));
-	gst_object_unref(clock);
+	// GstClock* clock = gst_system_clock_obtain ();
+	// GstClockTimeDiff diff = GST_CLOCK_DIFF(meta->in_timestamp, gst_clock_get_time(clock));
+	// gst_object_unref(clock);
+	struct timeval tv;
+  	gettimeofday(&tv,NULL);
+  	guint64 timestamp_in_us = tv.tv_sec*(guint64)1000000+tv.tv_usec;
+	GstClockTimeDiff diff = timestamp_in_us - meta->in_timestamp;
 
-	GST_DEBUG_OBJECT(GST_MARKOUT(trans), "Mark Duration: %" G_GINT64_FORMAT "ms", (diff / 1000000));
+	GST_DEBUG_OBJECT(GST_MARKOUT(trans), "Mark Duration: %" G_GINT64_FORMAT "us", (diff));
 
 	gst_buffer_remove_meta(in, (GstMeta*)meta);
 
